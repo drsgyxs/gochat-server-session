@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.drsg.gochat.v1.mapper.UserRoleMapper">
+  <resultMap id="BaseResultMap" type="com.drsg.gochat.v1.entity.UserRole">
+    <id column="USER_ROLE_ID" jdbcType="NUMERIC" property="userRoleId" />
+    <result column="USER_ID" jdbcType="NUMERIC" property="userId" />
+    <result column="ROLE_ID" jdbcType="NUMERIC" property="roleId" />
+  </resultMap>
+</mapper>

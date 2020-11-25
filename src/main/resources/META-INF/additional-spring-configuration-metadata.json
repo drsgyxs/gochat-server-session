@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "upload.images.dir",
+      "type": "java.lang.String",
+      "defaultValue": "/usr/local/nginx/html/images/",
+      "description": "Description for upload.images.dir."
+    },
+    {
+      "name": "upload.images.base-url",
+      "type": "java.lang.String",
+      "description": "Description for upload.images.base-url."
+    }
+  ] }
