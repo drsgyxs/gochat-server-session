@@ -1,10 +1,12 @@
 package com.drsg.gochat.v1.config;
 
+import com.drsg.gochat.v1.entity.UserInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -62,8 +64,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .and()
                 .authorizeRequests()
-                .mvcMatchers("/v1/register", "/ws/**")
+                .mvcMatchers(HttpMethod.POST, "/v1/users")
                 .permitAll()
+                .mvcMatchers(HttpMethod.GET, "/v1/rooms/**").permitAll()
+                .mvcMatchers("/ws/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -85,7 +89,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             httpServletResponse.setStatus(HttpServletResponse.SC_OK);
             Map<String, Object> map = new HashMap<>(1);
             map.put("message", "success");
-            logger.info("{} sign in.", ((User) authentication.getPrincipal()).getUsername());
+            logger.info("{} sign in.", ((UserInfo) authentication.getPrincipal()).getUsername());
             httpServletResponse.getWriter().println(new ObjectMapper().writeValueAsString(map));
         };
     }
@@ -96,7 +100,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             Map<String, Object> map = new HashMap<>(1);
             map.put("error", "认证失败，请重新登录");
-            logger.error("Authorization failed.");
+            logger.error("Authorization failed.", e);
             httpServletResponse.getWriter().println(new ObjectMapper().writeValueAsString(map));
         };
     }

@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 //@ServerEndpoint("/chat/{roomId}/{userId}")
 //@Component
 public class WebSocketServer {
-    private final static Logger log = LoggerFactory.getLogger(WebSocketServer.class);
+    private final static Logger logger = LoggerFactory.getLogger(WebSocketServer.class);
     private static AtomicInteger onlineCount = new AtomicInteger(0);
     private static final Map<String, Set<Session>> roomMap = new ConcurrentHashMap<>();
 
@@ -32,7 +32,7 @@ public class WebSocketServer {
             userSessions.add(session);
         }
         addOnlineCount();
-        log.info("用户连接：{}，当前在线人数：{}", userId, onlineCount);
+        logger.info("用户连接：{}，当前在线人数：{}", userId, onlineCount);
 
     }
 
@@ -40,7 +40,7 @@ public class WebSocketServer {
     public void onClose(@PathParam("roomId") String roomId, @PathParam("userId") String userId, Session session) {
         roomMap.get(roomId).remove(session);
         subOnlineCount();
-        log.info("用户退出：{}，当前在线人数：{}", userId, onlineCount);
+        logger.info("用户退出：{}，当前在线人数：{}", userId, onlineCount);
     }
 
     @OnMessage
@@ -48,7 +48,7 @@ public class WebSocketServer {
         if (!StringUtils.isEmpty(message)) {
             roomMap.get(roomId).forEach(userSession -> sendMessage(userSession, message));
         }
-        log.info("{}：{}", userId, message);
+        logger.info("{}：{}", userId, message);
     }
 
     private static void sendMessage(Session session, String message) {
@@ -63,7 +63,7 @@ public class WebSocketServer {
 
     @OnError
     public void onError(Throwable e, @PathParam("userId") String userId, @PathParam("roomId") String roomId, Session session) throws IOException {
-        log.info("用户" + userId + "错误，原因：" + e.getMessage());
+        logger.info("用户" + userId + "错误，原因：" + e.getMessage());
         e.printStackTrace();
         roomMap.get(roomId).remove(session);
         session.close();

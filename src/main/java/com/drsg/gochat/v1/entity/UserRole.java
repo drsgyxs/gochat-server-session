@@ -1,5 +1,6 @@
 package com.drsg.gochat.v1.entity;
 
+import com.drsg.gochat.v1.base.BaseEntity;
 import tk.mybatis.mapper.annotation.KeySql;
 import tk.mybatis.mapper.code.ORDER;
 
@@ -14,9 +15,7 @@ import java.io.Serializable;
  * @author YXs
  * @since 2020-11-12
  */
-public class UserRole implements Serializable {
-
-    private static final long serialVersionUID = 1985119488009188417L;
+public class UserRole extends BaseEntity {
     @Id
     @KeySql(sql = "select SEQ_USER_ROLE.nextval from dual", order = ORDER.BEFORE)
     private Long userRoleId;
@@ -50,14 +49,5 @@ public class UserRole implements Serializable {
     public UserRole setRoleId(Long roleId) {
         this.roleId = roleId;
         return this;
-    }
-
-    @Override
-    public String toString() {
-        return "UserRole{" +
-                "userRoleId=" + userRoleId +
-                "userId=" + userId +
-                ", roleId=" + roleId +
-                "}";
     }
 }

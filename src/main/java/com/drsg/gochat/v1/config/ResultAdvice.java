@@ -39,4 +39,5 @@ public class ResultAdvice {
         map.put("error", "服务器错误");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
     }
+
 }

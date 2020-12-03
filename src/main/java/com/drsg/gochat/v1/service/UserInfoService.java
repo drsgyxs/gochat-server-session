@@ -5,7 +5,7 @@ import com.github.pagehelper.PageSerializable;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface UserInfoService extends UserDetailsService {
-    UserInfo getMyInfo();
+    UserInfo getUserInfoById(Long userId);
     void insertUserInfo(UserInfo userInfo);
     int updateUserInfo(UserInfo userInfo);
 

@@ -1,6 +1,11 @@
 package com.drsg.gochat.v1.entity;
 
+import com.drsg.gochat.v1.base.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.security.core.CredentialsContainer;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import tk.mybatis.mapper.annotation.KeySql;
 import tk.mybatis.mapper.code.ORDER;
 
@@ -10,6 +15,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -20,16 +26,11 @@ import java.util.Set;
  * @author YXs
  * @since 2020-11-12
  */
-@Table(name = "USER_INFO")
-public class UserInfo implements Serializable {
-
-    private static final long serialVersionUID = 8976151796617271425L;
-
+public class UserInfo extends BaseEntity implements UserDetails, CredentialsContainer {
     @Id
     @KeySql(sql = "select SEQ_USER_INFO.nextval from dual", order = ORDER.BEFORE)
     private Long userId;
 
-    @Column
     private String username;
 
     private String password;
@@ -81,9 +82,38 @@ public class UserInfo implements Serializable {
         return username;
     }
 
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isEnabled() {
+        return enabled;
+    }
+
     public UserInfo setUsername(String username) {
         this.username = username;
         return this;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles;
     }
 
     public String getPassword() {
@@ -186,22 +216,7 @@ public class UserInfo implements Serializable {
     }
 
     @Override
-    public String toString() {
-        return "UserInfo{" +
-                "userId=" + userId +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", avatarUrl='" + avatarUrl + '\'' +
-                ", sex='" + sex + '\'' +
-                ", signature='" + signature + '\'' +
-                ", enabled=" + enabled +
-                ", createTime=" + createTime +
-                ", channel='" + channel + '\'' +
-                ", birthday=" + birthday +
-                ", nickname='" + nickname + '\'' +
-                ", email='" + email + '\'' +
-                ", emailVerified=" + emailVerified +
-                ", roles=" + roles +
-                '}';
+    public void eraseCredentials() {
+        password = null;
     }
 }

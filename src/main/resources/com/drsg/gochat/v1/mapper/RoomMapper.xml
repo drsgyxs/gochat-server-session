@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.drsg.gochat.v1.mapper.RoomMapper">
+    <resultMap id="RoomResultMap" type="com.drsg.gochat.v1.entity.Room">
+        <id column="ROOM_ID" property="roomId"/>
+        <result column="ROOM_NAME" property="roomName"/>
+        <result column="NOTICE" property="notice"/>
+        <result column="IS_PRIVATE" property="isPrivate"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <association property="owner" javaType="com.drsg.gochat.v1.entity.UserInfo">
+            <id column="USER_ID" jdbcType="NUMERIC" property="userId"/>
+            <result column="USERNAME" jdbcType="VARCHAR" property="username"/>
+            <result column="AVATAR_URL" jdbcType="VARCHAR" property="avatarUrl"/>
+            <result column="SEX" jdbcType="CHAR" property="sex"/>
+            <result column="NICKNAME" jdbcType="CHAR" property="nickname"/>
+        </association>
+    </resultMap>
+    <select id="selectList" resultMap="RoomResultMap">
+        select
+               ROOM_ID,
+               ROOM_NAME,
+               NOTICE,
+               IS_PRIVATE,
+               R.USER_ID,
+               R.CREATE_TIME,
+               USERNAME,
+               AVATAR_URL,
+               SEX,
+               NICKNAME
+        from ROOM R inner join USER_INFO UI on R.USER_ID = UI.USER_ID
+    </select>
+</mapper>

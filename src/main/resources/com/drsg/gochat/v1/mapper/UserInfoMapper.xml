@@ -24,6 +24,11 @@
         <result column="SIGNATURE" jdbcType="VARCHAR" property="signature"/>
         <result column="ENABLED" jdbcType="CHAR" property="enabled"/>
         <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="CHANNEL" jdbcType="VARCHAR" property="channel"/>
+        <result column="BIRTHDAY" property="birthday"/>
+        <result column="NICKNAME" property="nickname"/>
+        <result column="EMAIL" property="email"/>
+        <result column="EMAIL_VERIFIED" property="emailVerified"/>
         <collection property="roles" ofType="com.drsg.gochat.v1.entity.RoleInfo">
             <id column="ROLE_ID" property="roleId"/>
             <result column="ROLE_NAME" property="roleName"/>
@@ -32,7 +37,16 @@
     </resultMap>
 
     <select id="loadByUsername" resultMap="UserRoleResultMap">
-        select UI.USER_ID, USERNAME, PASSWORD, ENABLED, RI.ROLE_ID, ROLE_NAME
+        select
+        UI.USER_ID USER_ID,
+        USERNAME,
+        PASSWORD,
+        AVATAR_URL,
+        SEX,
+        ENABLED,
+        NICKNAME,
+        RI.ROLE_ID,
+        ROLE_NAME
         from USER_INFO UI
                  inner join USER_ROLE UR on UI.USER_ID = UR.USER_ID
                  inner join ROLE_INFO RI on UR.ROLE_ID = RI.ROLE_ID

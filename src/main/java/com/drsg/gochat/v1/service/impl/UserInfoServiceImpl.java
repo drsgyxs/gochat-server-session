@@ -44,21 +44,12 @@ public class UserInfoServiceImpl implements UserInfoService {
         UserInfo userInfo = this.userInfoMapper.loadByUsername(username);
         if (userInfo == null)
             throw new UsernameNotFoundException("Username not found.");
-        String[] roles = new String[userInfo.getRoles().size()];
-        int i = 0;
-        for (RoleInfo role : userInfo.getRoles()) {
-            roles[i++] = role.getRoleName();
-        }
-        return User.builder().username(username).password(userInfo.getPassword()).disabled(!userInfo.getEnabled()).roles(roles).build();
+        return userInfo;
     }
 
     @Override
-    public UserInfo getMyInfo() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = (User) principal;
-        return this.userInfoMapper.selectOneByExample(new Example.Builder(UserInfo.class).notSelect("password")
-                .where(WeekendSqls.<UserInfo>custom().andEqualTo(UserInfo::getUsername, user.getUsername()))
-                .build());
+    public UserInfo getUserInfoById(Long userId) {
+        return this.userInfoMapper.selectByPrimaryKey(userId);
     }
 
     @Override

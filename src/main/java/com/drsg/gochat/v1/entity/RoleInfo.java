@@ -1,5 +1,7 @@
 package com.drsg.gochat.v1.entity;
 
+import com.drsg.gochat.v1.base.BaseEntity;
+import org.springframework.security.core.GrantedAuthority;
 import tk.mybatis.mapper.annotation.KeySql;
 import tk.mybatis.mapper.code.ORDER;
 
@@ -14,10 +16,7 @@ import java.io.Serializable;
  * @author YXs
  * @since 2020-11-12
  */
-public class RoleInfo implements Serializable {
-
-    private static final long serialVersionUID = 2274852396732179923L;
-
+public class RoleInfo extends BaseEntity implements GrantedAuthority {
     @Id
     @KeySql(sql = "select SEQ_ROLE_INFO.nextval from dual", order = ORDER.BEFORE)
     private Long roleId;
@@ -55,11 +54,7 @@ public class RoleInfo implements Serializable {
     }
 
     @Override
-    public String toString() {
-        return "RoleInfo{" +
-        "roleId=" + roleId +
-        ", roleName=" + roleName +
-        ", description=" + description +
-        "}";
+    public String getAuthority() {
+        return "ROLE_" + roleName;
     }
 }

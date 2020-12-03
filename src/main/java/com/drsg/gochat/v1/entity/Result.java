@@ -1,9 +1,8 @@
 package com.drsg.gochat.v1.entity;
 
-import java.io.Serializable;
+import com.drsg.gochat.v1.base.BaseEntity;
 
-public class Result<T> implements Serializable {
-    private static final long serialVersionUID = -3288329603098632585L;
+public class Result<T> extends BaseEntity {
     private int code;
     private String message;
     private T data;
