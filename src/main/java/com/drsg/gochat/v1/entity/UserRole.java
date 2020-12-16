@@ -8,12 +8,7 @@ import javax.persistence.Id;
 import java.io.Serializable;
 
 /**
- * <p>
- *
- * </p>
- *
  * @author YXs
- * @since 2020-11-12
  */
 public class UserRole extends BaseEntity {
     @Id

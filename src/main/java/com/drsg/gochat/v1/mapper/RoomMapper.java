@@ -6,7 +6,12 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * @author YXs
+ */
 @Repository
 public interface RoomMapper extends BaseMapper<Room> {
-    List<Room> selectList();
+    List<Room> selectList(Room room);
+    Room selectByRoomId(Long roomId);
+    Room selectByUserId(Long userId);
 }

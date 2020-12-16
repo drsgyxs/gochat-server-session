@@ -13,7 +13,6 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -22,10 +21,12 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author YXs
+ */
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -41,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public UsernamePasswordAuthenticationFilter iUsernamePasswordAuthenticationFilter() throws Exception {
         UsernamePasswordAuthenticationFilter authenticationFilter = new IUsernamePasswordAuthenticationFilter();
         authenticationFilter.setAuthenticationManager(super.authenticationManager());
-        authenticationFilter.setFilterProcessesUrl("/v1/login");
+        authenticationFilter.setFilterProcessesUrl("/api/v1/login");
         authenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler());
         authenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
         return authenticationFilter;
@@ -64,16 +65,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .and()
                 .authorizeRequests()
-                .mvcMatchers(HttpMethod.POST, "/v1/users")
+                .mvcMatchers(HttpMethod.POST, "/api/v1/users")
                 .permitAll()
-                .mvcMatchers(HttpMethod.GET, "/v1/rooms/**").permitAll()
+                .mvcMatchers(HttpMethod.GET, "/api/v1/rooms/**").permitAll()
                 .mvcMatchers("/ws/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
                 .addFilterAt(iUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .logout()
-                .logoutUrl("/v1/logout")
+                .logoutUrl("/api/v1/logout")
                 .logoutSuccessHandler((httpServletRequest, httpServletResponse, authentication) -> {
                     httpServletResponse.setContentType("application/json;charset=utf-8");
                     Map<String, Object> map = new HashMap<>(1);
@@ -100,7 +101,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             Map<String, Object> map = new HashMap<>(1);
             map.put("error", "认证失败，请重新登录");
-            logger.error("Authorization failed.", e);
+            logger.error("Authorization failed.");
             httpServletResponse.getWriter().println(new ObjectMapper().writeValueAsString(map));
         };
     }

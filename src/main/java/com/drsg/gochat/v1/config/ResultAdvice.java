@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author YXs
+ */
 @RestControllerAdvice
 public class ResultAdvice {
     private final Logger logger = LoggerFactory.getLogger(ResultAdvice.class);

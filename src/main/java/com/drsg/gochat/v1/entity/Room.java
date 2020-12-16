@@ -2,14 +2,19 @@ package com.drsg.gochat.v1.entity;
 
 import com.drsg.gochat.v1.base.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.security.core.CredentialsContainer;
 import tk.mybatis.mapper.annotation.KeySql;
 import tk.mybatis.mapper.code.ORDER;
 
 import javax.persistence.Id;
 import javax.persistence.Transient;
 import java.time.LocalDateTime;
+import java.util.Set;
 
-public class Room extends BaseEntity {
+/**
+ * @author YXs
+ */
+public class Room extends BaseEntity implements CredentialsContainer {
     @Id
     @KeySql(sql = "select SEQ_ROOM.nextval from dual", order = ORDER.BEFORE)
     private Long roomId;
@@ -18,14 +23,38 @@ public class Room extends BaseEntity {
     private Boolean isPrivate;
     private String password;
     private Long userId;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
     @Transient
     private UserInfo owner;
+    @Transient
+    private Set<UserInfo> onlineUsers;
+    @Transient
+    private Integer onlineCount;
 
-    public void eraseCredential() {
+    public Integer getOnlineCount() {
+        return onlineCount;
+    }
+
+    public Room setOnlineCount(Integer onlineCount) {
+        this.onlineCount = onlineCount;
+        return this;
+    }
+
+    public Set<UserInfo> getOnlineUsers() {
+        return onlineUsers;
+    }
+
+    public Room setOnlineUsers(Set<UserInfo> onlineUsers) {
+        this.onlineUsers = onlineUsers;
+        return this;
+    }
+
+    @Override
+    public void eraseCredentials() {
         this.password = null;
     }
+
     public Long getRoomId() {
         return roomId;
     }

@@ -9,22 +9,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import tk.mybatis.mapper.annotation.KeySql;
 import tk.mybatis.mapper.code.ORDER;
 
-import javax.persistence.Column;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 
 /**
- * <p>
- * 
- * </p>
- *
  * @author YXs
- * @since 2020-11-12
  */
 public class UserInfo extends BaseEntity implements UserDetails, CredentialsContainer {
     @Id
@@ -43,13 +37,13 @@ public class UserInfo extends BaseEntity implements UserDetails, CredentialsCont
 
     private Boolean enabled;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime createTime;
 
     private String channel;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDateTime birthday;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    private LocalDate birthday;
 
     private String nickname;
 
@@ -58,7 +52,31 @@ public class UserInfo extends BaseEntity implements UserDetails, CredentialsCont
     private Boolean emailVerified;
 
     @Transient
+    private String newPassword;
+
+    @Transient
+    private String checkPassword;
+
+    @Transient
     private Set<RoleInfo> roles;
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public UserInfo setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+        return this;
+    }
+
+    public String getCheckPassword() {
+        return checkPassword;
+    }
+
+    public UserInfo setCheckPassword(String checkPassword) {
+        this.checkPassword = checkPassword;
+        return this;
+    }
 
     public Set<RoleInfo> getRoles() {
         return roles;
@@ -78,6 +96,7 @@ public class UserInfo extends BaseEntity implements UserDetails, CredentialsCont
         return this;
     }
 
+    @Override
     public String getUsername() {
         return username;
     }
@@ -116,6 +135,7 @@ public class UserInfo extends BaseEntity implements UserDetails, CredentialsCont
         return roles;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
@@ -179,11 +199,11 @@ public class UserInfo extends BaseEntity implements UserDetails, CredentialsCont
         return this;
     }
 
-    public LocalDateTime getBirthday() {
+    public LocalDate getBirthday() {
         return birthday;
     }
 
-    public UserInfo setBirthday(LocalDateTime birthday) {
+    public UserInfo setBirthday(LocalDate birthday) {
         this.birthday = birthday;
         return this;
     }
@@ -213,6 +233,23 @@ public class UserInfo extends BaseEntity implements UserDetails, CredentialsCont
     public UserInfo setEmailVerified(Boolean emailVerified) {
         this.emailVerified = emailVerified;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        UserInfo userInfo = (UserInfo) o;
+        return Objects.equals(username, userInfo.username);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username);
     }
 
     @Override

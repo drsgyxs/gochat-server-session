@@ -1,20 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.drsg.gochat.v1.mapper.UserInfoMapper">
-    <!--    <resultMap id="BaseResultMap" type="com.example.v1.entity.UserInfo">-->
-    <!--        <id column="USER_ID" jdbcType="NUMERIC" property="userId"/>-->
-    <!--        <result column="USERNAME" jdbcType="VARCHAR" property="username"/>-->
-    <!--        <result column="PASSWORD" jdbcType="VARCHAR" property="password"/>-->
-    <!--        <result column="AVATAR_URL" jdbcType="VARCHAR" property="avatarUrl"/>-->
-    <!--        <result column="SEX" jdbcType="CHAR" property="sex"/>-->
-    <!--        <result column="SIGNATURE" jdbcType="VARCHAR" property="signature"/>-->
-    <!--        <result column="ENABLED" jdbcType="CHAR" property="enabled"/>-->
-    <!--        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>-->
-    <!--        <result column="CHANNEL" jdbcType="VARCHAR" property="channel"/>-->
-    <!--        <result column="BIRTHDAY" jdbcType="TIMESTAMP" property="birthday"/>-->
-    <!--        <result column="NICKNAME" jdbcType="VARCHAR" property="nickname"/>-->
-    <!--        <result column="EMAIL" jdbcType="VARCHAR" property="email"/>-->
-    <!--    </resultMap>-->
     <resultMap id="UserRoleResultMap" type="com.drsg.gochat.v1.entity.UserInfo">
         <id column="USER_ID" jdbcType="NUMERIC" property="userId"/>
         <result column="USERNAME" jdbcType="VARCHAR" property="username"/>
@@ -89,5 +75,24 @@
                 AND EMAIL_VERIFIED = #{emailVerified}
             </if>
         </where>
+    </select>
+    <select id="selectByIds" resultMap="UserRoleResultMap">
+        select
+            UI.USER_ID USER_ID,
+            USERNAME,
+            AVATAR_URL,
+            SEX,
+            SIGNATURE,
+            NICKNAME,
+            CHANNEL,
+            RI.ROLE_ID,
+            ROLE_NAME
+        from USER_INFO UI
+                 inner join USER_ROLE UR on UI.USER_ID = UR.USER_ID
+                 inner join ROLE_INFO RI on UR.ROLE_ID = RI.ROLE_ID
+        where UI.USER_ID in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
     </select>
 </mapper>

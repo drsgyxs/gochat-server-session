@@ -1,5 +1,8 @@
 package com.drsg.gochat.v1.utils;
 
+/**
+ * @author YXs
+ */
 public class StringUtils {
     public static boolean isNotEmpty(CharSequence cs) {
         return !isEmpty(cs);

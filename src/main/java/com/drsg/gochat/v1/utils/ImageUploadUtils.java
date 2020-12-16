@@ -10,6 +10,9 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * @author YXs
+ */
 @Component
 @ConfigurationProperties(prefix = "upload.images")
 public class ImageUploadUtils {
@@ -17,18 +20,31 @@ public class ImageUploadUtils {
     private String baseUrl;
 
     public String storeImage(MultipartFile image) throws IOException {
-        Objects.requireNonNull(image.getOriginalFilename());
         StringBuilder filePath = new StringBuilder(dir);
-        String suffix = image.getOriginalFilename().substring(image.getOriginalFilename().lastIndexOf("."));
+        String imageType = image.getContentType();
+        String suffix;
+        switch (Objects.requireNonNull(imageType)) {
+            case "image/png":
+                suffix = ".png";
+                break;
+            case "image/gif":
+                suffix = ".gif";
+                break;
+            default:
+                suffix = ".jpg";
+        }
         String fileName = UUID.randomUUID().toString() + suffix;
-        if (!dir.endsWith("/"))
-            filePath.append("/");
+        String dirSymbol = "/";
+        if (!dir.endsWith(dirSymbol)) {
+            filePath.append(dirSymbol);
+        }
         filePath.append(fileName);
         Path imagePath = Paths.get(filePath.toString());
         image.transferTo(imagePath);
         StringBuilder imageUrl = new StringBuilder(baseUrl);
-        if (!baseUrl.endsWith("/"))
-            imageUrl.append("/");
+        if (!baseUrl.endsWith(dirSymbol)) {
+            imageUrl.append(dirSymbol);
+        }
         imageUrl.append(fileName);
         return imageUrl.toString();
     }

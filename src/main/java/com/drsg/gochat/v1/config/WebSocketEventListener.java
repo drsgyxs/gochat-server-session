@@ -1,78 +1,74 @@
 package com.drsg.gochat.v1.config;
 
-import com.drsg.gochat.v1.entity.Room;
-import com.drsg.gochat.v1.exception.BusinessException;
-import com.drsg.gochat.v1.service.RoomService;
+import com.drsg.gochat.v1.entity.UserInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
+import org.springframework.web.socket.messaging.SessionUnsubscribeEvent;
 
 import java.security.Principal;
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * @author YXs
+ */
 @Component
 public class WebSocketEventListener {
     private final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
     private final OnlineUsers onlineUsers;
-    private final RoomService roomService;
-    private final SimpMessageSendingOperations messageSendingOperations;
+    private final String ROOM_DEST_PREFIX = "/topic/room";
 
-    public WebSocketEventListener(OnlineUsers onlineUsers, RoomService roomService, SimpMessageSendingOperations messageSendingOperations) {
+    public WebSocketEventListener(OnlineUsers onlineUsers) {
         this.onlineUsers = onlineUsers;
-        this.roomService = roomService;
-        this.messageSendingOperations = messageSendingOperations;
     }
 
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectEvent event) {
-        Principal user = event.getUser();
         logger.info("User connected.");
-        if (user == null) {
-            AtomicInteger anonymousCount = this.onlineUsers.getAnonymousCount();
-            int i = anonymousCount.incrementAndGet();
-            logger.info("当前在线匿名用户数：{}", i);
-        }
     }
 
     @EventListener
     public void handleWebSocketSubscribeListener(SessionSubscribeEvent event) {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-        List<String> passcode = headerAccessor.getNativeHeader("passcode");
-        String password = null;
-        if (passcode != null && !passcode.isEmpty())
-            password = passcode.get(0);
         String destination = headerAccessor.getDestination();
-        if (destination == null)
-            throw new BusinessException("订阅出错");
-        if (destination.startsWith("/topic/room")) {
+        Principal principal = headerAccessor.getUser();
+        logger.info("{}被订阅", destination);
+        if (destination != null && destination.startsWith(ROOM_DEST_PREFIX)) {
             Long roomId = Long.valueOf(destination.substring(destination.lastIndexOf("/") + 1));
-            Room room = this.roomService.getRoomById(roomId, password);
-            if (room == null) {
-                throw new BusinessException("密码错误");
+            Long userId = -1L;
+            Map<String, Long> users;
+            // login user
+            if (principal != null) {
+                UsernamePasswordAuthenticationToken user = (UsernamePasswordAuthenticationToken) principal;
+                userId = ((UserInfo) user.getPrincipal()).getUserId();
+            }
+            Map<Long, Map<String, Long>> onlineUsers = this.onlineUsers.getOnlineUsers();
+            if (onlineUsers.containsKey(roomId)) {
+                users = onlineUsers.get(roomId);
+                users.put(headerAccessor.getSessionId(), userId);
+            } else {
+                users = new ConcurrentHashMap<>(10);
+                users.put(headerAccessor.getSessionId(), userId);
+                onlineUsers.put(roomId, users);
             }
         }
-        logger.info("{}被订阅", destination);
+        logger.info("当前在线用户数：{}", this.onlineUsers.getOnlineUsersCount());
     }
-
-
 
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
-        Principal user = event.getUser();
         logger.info("User disconnected.");
-        if (user == null) {
-            AtomicInteger anonymousCount = this.onlineUsers.getAnonymousCount();
-            anonymousCount.decrementAndGet();
-        } else {
-            this.onlineUsers.getUsers().remove(user.getName());
-        }
-        logger.info("当前在线用户数：{}，当前在线匿名用户数：{}", this.onlineUsers.getUsers().size(), this.onlineUsers.getAnonymousCount().get());
+        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+        this.onlineUsers.removeUser(headerAccessor.getSessionId());
+        logger.info("当前在线用户数：{}", this.onlineUsers.getOnlineUsersCount());
     }
 }

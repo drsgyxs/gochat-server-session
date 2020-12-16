@@ -2,6 +2,9 @@ package com.drsg.gochat.v1.entity;
 
 import com.drsg.gochat.v1.base.BaseEntity;
 
+/**
+ * @author YXs
+ */
 public class Result<T> extends BaseEntity {
     private int code;
     private String message;

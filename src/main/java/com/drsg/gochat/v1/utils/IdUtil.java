@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
  * Maximum SH = ----- -------- -------- -------- -------- -------- ---11111 = 31
  * <p>
  * It can generate 64k unique id per IP and up to 2106-02-07T06:28:15Z.
+ * @author YXs
  */
 public final class IdUtil {
 

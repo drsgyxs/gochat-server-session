@@ -14,6 +14,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * @author YXs
+ */
 //@ServerEndpoint("/chat/{roomId}/{userId}")
 //@Component
 public class WebSocketServer {

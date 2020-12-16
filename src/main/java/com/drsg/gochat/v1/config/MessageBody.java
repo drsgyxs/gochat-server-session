@@ -2,6 +2,9 @@ package com.drsg.gochat.v1.config;
 
 import com.drsg.gochat.v1.entity.UserInfo;
 
+/**
+ * @author YXs
+ */
 public class MessageBody<T> {
     private Long id;
     private UserInfo from;
@@ -10,9 +13,13 @@ public class MessageBody<T> {
     private MessageType type;
 
     public enum MessageType {
+        // 公共消息
         PUBLIC,
+        //私聊
         CHAT,
+        // 用户加入房间
         JOIN,
+        // 用户离开房间
         LEAVE
     }
 

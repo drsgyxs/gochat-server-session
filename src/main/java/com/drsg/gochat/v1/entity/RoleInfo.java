@@ -7,6 +7,7 @@ import tk.mybatis.mapper.code.ORDER;
 
 import javax.persistence.Id;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * <p>
@@ -14,7 +15,6 @@ import java.io.Serializable;
  * </p>
  *
  * @author YXs
- * @since 2020-11-12
  */
 public class RoleInfo extends BaseEntity implements GrantedAuthority {
     @Id
@@ -56,5 +56,24 @@ public class RoleInfo extends BaseEntity implements GrantedAuthority {
     @Override
     public String getAuthority() {
         return "ROLE_" + roleName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        RoleInfo roleInfo = (RoleInfo) o;
+        return Objects.equals(roleId, roleInfo.roleId) &&
+                Objects.equals(roleName, roleInfo.roleName) &&
+                Objects.equals(description, roleInfo.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(roleId, roleName, description);
     }
 }

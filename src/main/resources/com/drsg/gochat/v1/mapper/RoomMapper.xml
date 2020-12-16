@@ -6,6 +6,7 @@
         <result column="ROOM_NAME" property="roomName"/>
         <result column="NOTICE" property="notice"/>
         <result column="IS_PRIVATE" property="isPrivate"/>
+        <result column="PASSWORD" property="password" />
         <result column="CREATE_TIME" property="createTime"/>
         <association property="owner" javaType="com.drsg.gochat.v1.entity.UserInfo">
             <id column="USER_ID" jdbcType="NUMERIC" property="userId"/>
@@ -22,11 +23,48 @@
                NOTICE,
                IS_PRIVATE,
                R.USER_ID,
-               R.CREATE_TIME,
                USERNAME,
                AVATAR_URL,
                SEX,
                NICKNAME
         from ROOM R inner join USER_INFO UI on R.USER_ID = UI.USER_ID
+        <where>
+            <if test="roomId != null">
+                ROOM_ID = #{roomId}
+            </if>
+            <if test="userId != null">
+                R.USER_ID = #{userId}
+            </if>
+            <if test="roomName != null">
+                ROOM_NAME = #{roomName}
+            </if>
+        </where>
+    </select>
+    <select id="selectByRoomId" resultMap="RoomResultMap">
+        select
+            ROOM_ID,
+            ROOM_NAME,
+            NOTICE,
+            IS_PRIVATE,
+            R.PASSWORD PASSWORD,
+            R.USER_ID USER_ID,
+            USERNAME,
+            AVATAR_URL,
+            SEX,
+            NICKNAME
+        from ROOM R inner join USER_INFO UI on R.USER_ID = UI.USER_ID where ROOM_ID = #{roomId}
+    </select>
+    <select id="selectByUserId" resultMap="RoomResultMap">
+        select
+            ROOM_ID,
+            ROOM_NAME,
+            NOTICE,
+            IS_PRIVATE,
+            R.USER_ID,
+            USERNAME,
+            AVATAR_URL,
+            SEX,
+            NICKNAME
+        from ROOM R inner join USER_INFO UI on R.USER_ID = UI.USER_ID where R.USER_ID = #{userId}
     </select>
 </mapper>

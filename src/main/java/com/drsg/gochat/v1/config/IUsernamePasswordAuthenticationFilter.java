@@ -13,11 +13,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * ContentType为json类型的登录请求处理
+ *
+ * @author YXs
+ */
 public class IUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         if (request.getContentType() != null && request.getContentType().contains(MediaType.APPLICATION_JSON_VALUE)) {
-            if (!request.getMethod().equals("POST")) {
+            if (!"POST".equals(request.getMethod())) {
                 throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
             } else {
                 String username = "";

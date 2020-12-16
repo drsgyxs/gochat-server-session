@@ -5,6 +5,9 @@ import org.springframework.core.style.ToStringCreator;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 
+/**
+ * @author YXs
+ */
 public class BaseEntity implements Serializable {
     private static final long serialVersionUID = 4441236828547625093L;
 

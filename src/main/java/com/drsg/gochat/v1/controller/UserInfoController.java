@@ -23,10 +23,9 @@ import java.util.Map;
 
 /**
  * @author YXs
- * @since 2020-11-12
  */
 @RestController
-@RequestMapping("/v1/users")
+@RequestMapping("/api/v1/users")
 public class UserInfoController {
     private final UserInfoService userInfoService;
     private final ImageUploadUtils imageUploadUtils;
@@ -39,7 +38,7 @@ public class UserInfoController {
 
     @PostMapping("/{userId}/avatar")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Integer> uploadAvatar(@RequestParam("file") MultipartFile image, @PathVariable("userId") Long userId) throws IOException {
+    public ResponseEntity<Integer> uploadAvatar(@RequestParam("image") MultipartFile image, @PathVariable("userId") Long userId) throws IOException {
         String imageUrl = imageUploadUtils.storeImage(image);
         UserInfo userInfo = new UserInfo().setUserId(userId).setAvatarUrl(imageUrl);
         return ResponseEntity.ok(this.userInfoService.updateUserInfo(userInfo));
@@ -55,7 +54,7 @@ public class UserInfoController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Integer> updateUserInfo(@RequestBody UserInfo userInfo, @PathVariable("userId") Long userId) {
         userInfo.setUserId(userId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.userInfoService.updateUserInfo(userInfo));
+        return ResponseEntity.ok().body(this.userInfoService.updateUserInfo(userInfo));
     }
 
     @GetMapping
